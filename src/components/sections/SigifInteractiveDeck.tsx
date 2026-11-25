@@ -16,6 +16,7 @@ import {
   Play,
   RotateCw,
 } from "lucide-react";
+import { useSettings } from "@/context/SettingsContext";
 
 const CODE_LINES = [
   {
@@ -122,6 +123,7 @@ const AUDIT_EVENTS = [
 const appleEase = [0.16, 1, 0.3, 1] as const;
 
 export const SigifInteractiveDeck: React.FC = () => {
+  const { t } = useSettings();
   const [activeLens, setActiveLens] = useState<"security" | "billing" | "audit">("security");
   const [replayKey, setReplayKey] = useState(0);
   const [activeCodeLine, setActiveCodeLine] = useState(0);
@@ -167,10 +169,18 @@ export const SigifInteractiveDeck: React.FC = () => {
           <div>
             <div className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-widest text-[#0071e3] mb-1.5">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>Laboratorio Interactivo · Animación en Vivo</span>
+              <span>
+                {t(
+                  "Laboratorio Interactivo · Animación en Vivo",
+                  "Interactive Lab · Live Animation"
+                )}
+              </span>
             </div>
             <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#1d1d1f]">
-              Explora cómo funciona SIGIF por dentro
+              {t(
+                "Explora cómo funciona SIGIF por dentro",
+                "Explore how SIGIF works under the hood"
+              )}
             </h3>
           </div>
 
@@ -181,17 +191,17 @@ export const SigifInteractiveDeck: React.FC = () => {
                 [
                   {
                     id: "security",
-                    label: "1. Código & Seguridad",
+                    label: t("1. Código & Seguridad", "1. Code & Security"),
                     icon: <Terminal className="w-3.5 h-3.5 text-[#0071e3]" />,
                   },
                   {
                     id: "billing",
-                    label: "2. Motor de Facturación",
+                    label: t("2. Motor de Facturación", "2. Billing Engine"),
                     icon: <Receipt className="w-3.5 h-3.5 text-[#ff9500]" />,
                   },
                   {
                     id: "audit",
-                    label: "3. Auditoría Forense",
+                    label: t("3. Auditoría Forense", "3. Forensic Audit"),
                     icon: <ShieldCheck className="w-3.5 h-3.5 text-[#34c759]" />,
                   },
                 ] as const
@@ -224,11 +234,11 @@ export const SigifInteractiveDeck: React.FC = () => {
             <button
               type="button"
               onClick={handleReplay}
-              title="Repetir animación"
+              title={t("Repetir animación", "Replay animation")}
               className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#fafafa] hover:bg-[#f0f0f5] border border-black/[0.06] text-xs font-semibold text-[#1d1d1f] transition-colors cursor-pointer"
             >
               <RotateCw className="w-3.5 h-3.5 text-[#0071e3]" />
-              <span className="hidden sm:inline">Repetir efecto</span>
+              <span className="hidden sm:inline">{t("Repetir efecto", "Replay effect")}</span>
             </button>
           </div>
         </div>

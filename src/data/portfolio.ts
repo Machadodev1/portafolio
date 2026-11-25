@@ -1,3 +1,5 @@
+import type { Language } from "@/context/SettingsContext";
+
 export interface TechSkill {
   id: string;
   name: string;
@@ -52,7 +54,7 @@ export interface PortfolioData {
   featuredProject: FeaturedProject;
 }
 
-export const PORTFOLIO_DATA: PortfolioData = {
+export const PORTFOLIO_DATA_ES: PortfolioData = {
   personal: {
     name: "Andrés Machado",
     alias: "Machadodev1",
@@ -196,3 +198,154 @@ export const PORTFOLIO_DATA: PortfolioData = {
     ],
   },
 };
+
+export const PORTFOLIO_DATA_EN: PortfolioData = {
+  personal: {
+    name: "Andrés Machado",
+    alias: "Machadodev1",
+    title: "Junior Software Developer",
+    status: "In Practical Internship",
+    headline: "I'm Andrés Machado. Junior Software Developer.",
+    subheadline:
+      "I build high-performance web and mobile applications combining solid backend logic, efficient databases, and polished user experiences.",
+    biography:
+      "Junior Software Developer currently in my practical internship stage based in Medellín, Colombia. With rigorous technical training and hands-on experience building real-world solutions like inventory, billing, and enterprise systems, I focus on structured logic, continuous self-learning, and clean, maintainable code.",
+    location: "Medellín, Colombia",
+    github: "https://github.com/machadodev1",
+    linkedin: "https://www.linkedin.com/in/machadodev1",
+    whatsapp: "https://wa.me/573145827883",
+    phone: "+57 314 582 7883",
+    email: "machadoandres444@gmail.com",
+  },
+  navigation: [
+    { label: "Home", href: "#inicio" },
+    { label: "Skills", href: "#habilidades" },
+    { label: "Project", href: "#proyecto" },
+    { label: "About Me", href: "#sobre-mi" },
+    { label: "Contact", href: "#contacto" },
+  ],
+  coreSkills: [
+    {
+      id: "django",
+      name: "Django & Python",
+      category: "Backend & APIs",
+      level: "Advanced",
+      description:
+        "Enterprise backend services, RESTful APIs with Django REST Framework, robust PBKDF2 authentication, and RBAC access control.",
+      highlights: ["Django REST Framework", "Advanced ORM Queries", "Rate Limiting & Security"],
+    },
+    {
+      id: "flutter",
+      name: "Flutter",
+      category: "Cross-Platform Mobile",
+      level: "Intermediate - Advanced",
+      description:
+        "Native mobile apps for iOS and Android with smooth 60 FPS rendering, reactive architecture, and clean API integration.",
+      highlights: ["iOS & Android Apps", "State Management", "Declarative UI"],
+    },
+    {
+      id: "node",
+      name: "Node.js",
+      category: "Backend & Microservices",
+      level: "Intermediate",
+      description:
+        "Lightweight servers, automated cron tasks, and asynchronous API endpoints in JavaScript/TypeScript with database integrations.",
+      highlights: ["Express & REST APIs", "Async Architecture", "Automated Backups & Cron"],
+    },
+    {
+      id: "figma",
+      name: "Figma",
+      category: "UI/UX & Prototyping",
+      level: "Advanced",
+      description:
+        "Interface design following Apple Human Interface guidelines, atomic design systems, visual tokens, and high-fidelity interactive prototypes.",
+      highlights: ["Atomic Design Systems", "Interactive Prototypes", "Apple Aesthetic"],
+    },
+    {
+      id: "postgresql",
+      name: "PostgreSQL",
+      category: "Relational Databases",
+      level: "Advanced",
+      description:
+        "Normalized data modeling, strict ACID transactions, complex query optimization with B-Tree indexes, and referential integrity.",
+      highlights: ["ACID Transactions", "B-Tree Indexing", "Referential Integrity"],
+    },
+  ],
+  softSkills: [
+    {
+      title: "Programming Logic",
+      description: "Rigorous algorithmic thinking and step-by-step structured problem solving.",
+    },
+    {
+      title: "Clear Communication",
+      description: "Precision when documenting requirements, presenting technical progress, and coordinating workflows.",
+    },
+    {
+      title: "Team Collaboration",
+      description: "Proactive teamwork using Git, code reviews, and agile continuous delivery.",
+    },
+    {
+      title: "Self-Driven Learning",
+      description: "Proven ability to research, master new technologies, and adapt quickly to challenges.",
+    },
+  ],
+  philosophyWords:
+    "Technical excellence is no accident. It is the exact balance between resilient architectures, structured code, and obsession over every micro-detail.",
+  featuredProject: {
+    title: "SIGIF",
+    fullName: "Inventory & Billing Management Information System",
+    tagline:
+      "Enterprise web platform integrating commercial operations, inventory, finances, and real-time auditing for workshops and auto-parts companies.",
+    description:
+      "SIGIF solves the chaos of managing inventory, sales, and accounts across disconnected spreadsheets. It centralizes stock control, VAT invoicing, customer portfolios, and full action traceability in a single platform.",
+    liveUrl: "https://sigif-final.vercel.app",
+    repoUrl: "https://github.com/machadodev1/sigif-final",
+    stack: ["Python · Django", "PostgreSQL", "Django REST Framework", "Bootstrap 5", "pytest"],
+    modules: [
+      {
+        title: "Security & Access",
+        description:
+          "PBKDF2 encrypted login, IP lockout after 5 failed attempts (5 min), and role-based access control: SuperAdmin, Admin, and Employee.",
+      },
+      {
+        title: "Inventory Control",
+        description:
+          "Merchandise entries with unique auto-numbering (ENT-00001), critical stock alerts (<5 units), out-of-stock tracking, and full history.",
+      },
+      {
+        title: "Commercial Billing",
+        description:
+          "Invoices with 19% VAT breakdown, automatic discounts, multiple payment methods (Cash, Card, Transfer, Credit), and live stock deduction.",
+      },
+      {
+        title: "Financial Management",
+        description:
+          "Operating expenses, accounts payable and receivable, cash reconciliation, and profitability analysis by category.",
+      },
+      {
+        title: "Forensic Auditing",
+        description:
+          "Automatic logging of every critical action: user, affected module, exact detail, and immutable timestamp.",
+      },
+      {
+        title: "REST API & QA",
+        description:
+          "OpenAPI/Swagger documented API, expiring token authentication, rate limiting, and automated pytest test suite covering security and flows.",
+      },
+    ],
+    highlights: [
+      "PBKDF2 + Brute-force guard",
+      "RBAC (3 role tiers)",
+      "Real-time stock sync",
+      "19% VAT + multi-payment",
+      "Automated DB backups",
+      "OpenAPI / Swagger",
+    ],
+  },
+};
+
+export const PORTFOLIO_DATA = PORTFOLIO_DATA_ES;
+
+export function getPortfolioData(lang: Language): PortfolioData {
+  return lang === "en" ? PORTFOLIO_DATA_EN : PORTFOLIO_DATA_ES;
+}

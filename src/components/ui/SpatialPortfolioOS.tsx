@@ -17,6 +17,7 @@ import { AboutMeSection } from "@/components/sections/AboutMeSection";
 import { ProjectShowcase } from "@/components/sections/ProjectShowcase";
 import { SigifInteractiveDeck } from "@/components/sections/SigifInteractiveDeck";
 import { ContactFooter } from "@/components/sections/ContactFooter";
+import { SettingsProvider, useSettings } from "@/context/SettingsContext";
 
 export type StageChapter = "perfil" | "habilidades" | "sigif" | "crear";
 
@@ -28,39 +29,40 @@ interface ChapterItem {
   icon: React.ReactNode;
 }
 
-const CHAPTERS: ChapterItem[] = [
-  {
-    id: "perfil",
-    label: "1. Andrés & Perfil",
-    shortLabel: "Perfil",
-    subtitle: "Quién soy, avatar 3D y formación",
-    icon: <User className="w-4 h-4" />,
-  },
-  {
-    id: "habilidades",
-    label: "2. Habilidades & Stack",
-    shortLabel: "Stack",
-    subtitle: "Django, Flutter, Node, Figma y PostgreSQL",
-    icon: <Cpu className="w-4 h-4" />,
-  },
-  {
-    id: "sigif",
-    label: "3. Caso Real: SIGIF",
-    shortLabel: "SIGIF",
-    subtitle: "Arquitectura empresarial y laboratorio",
-    icon: <Rocket className="w-4 h-4" />,
-  },
-  {
-    id: "crear",
-    label: "4. Armar tu Proyecto",
-    shortLabel: "Armar Idea",
-    subtitle: "Configurador 3D para clientes",
-    icon: <Sparkles className="w-4 h-4" />,
-  },
-];
-
-export const SpatialPortfolioOS: React.FC = () => {
+const SpatialStageContent: React.FC = () => {
   const [activeChapter, setActiveChapter] = useState<StageChapter>("perfil");
+  const { t } = useSettings();
+
+  const chapters: ChapterItem[] = [
+    {
+      id: "perfil",
+      label: t("1. Andrés & Perfil", "1. Andrés & Profile"),
+      shortLabel: t("Perfil", "Profile"),
+      subtitle: t("Quién soy, avatar 3D y formación", "About me, 3D avatar & education"),
+      icon: <User className="w-4 h-4" />,
+    },
+    {
+      id: "habilidades",
+      label: t("2. Habilidades & Stack", "2. Skills & Stack"),
+      shortLabel: "Stack",
+      subtitle: t("Django, Flutter, Node, Figma y PostgreSQL", "Django, Flutter, Node, Figma & PostgreSQL"),
+      icon: <Cpu className="w-4 h-4" />,
+    },
+    {
+      id: "sigif",
+      label: t("3. Caso Real: SIGIF", "3. Case Study: SIGIF"),
+      shortLabel: "SIGIF",
+      subtitle: t("Arquitectura empresarial y laboratorio", "Enterprise architecture & live lab"),
+      icon: <Rocket className="w-4 h-4" />,
+    },
+    {
+      id: "crear",
+      label: t("4. Armar tu Proyecto", "4. Build a Project"),
+      shortLabel: t("Armar Idea", "Builder"),
+      subtitle: t("Configurador 3D para clientes", "3D client project configurator"),
+      icon: <Sparkles className="w-4 h-4" />,
+    },
+  ];
 
   const switchChapter = (chapter: StageChapter) => {
     setActiveChapter(chapter);
@@ -69,15 +71,15 @@ export const SpatialPortfolioOS: React.FC = () => {
     }
   };
 
-  const currentIdx = CHAPTERS.findIndex((c) => c.id === activeChapter);
-  const nextChapter = CHAPTERS[(currentIdx + 1) % CHAPTERS.length];
+  const currentIdx = chapters.findIndex((c) => c.id === activeChapter);
+  const nextChapter = chapters[(currentIdx + 1) % chapters.length];
 
   return (
-    <div className="min-h-screen bg-white text-[#1d1d1f] pb-28 relative">
-      {/* Top Navbar with Spatial Chapter trigger */}
+    <div className="min-h-screen bg-white text-[#1d1d1f] pb-28 relative transition-colors duration-300">
+      {/* Top Navbar with Spatial Chapter trigger & Settings Popover */}
       <Navbar activeChapter={activeChapter} onSelectChapter={switchChapter} />
 
-      {/* Spatial 3D Stage Container (No endless scroll!) */}
+      {/* Spatial 3D Stage Container */}
       <main className="relative overflow-hidden">
         <AnimatePresence mode="wait">
           {activeChapter === "perfil" && (
@@ -143,10 +145,13 @@ export const SpatialPortfolioOS: React.FC = () => {
               </div>
               <div>
                 <div className="text-[11px] font-mono uppercase tracking-wider text-[#86868b]">
-                  Navegación por Capas · Cero Scroll Infinito
+                  {t(
+                    "Navegación por Capas · Cero Scroll Infinito",
+                    "Spatial Layer Navigation · Zero Endless Scroll"
+                  )}
                 </div>
                 <div className="text-sm font-bold text-[#1d1d1f]">
-                  Siguiente espacio: {nextChapter.label} —{" "}
+                  {t("Siguiente espacio:", "Next stage:")} {nextChapter.label} —{" "}
                   <span className="font-normal text-[#86868b]">{nextChapter.subtitle}</span>
                 </div>
               </div>
@@ -157,7 +162,9 @@ export const SpatialPortfolioOS: React.FC = () => {
               onClick={() => switchChapter(nextChapter.id)}
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#1d1d1f] text-white text-xs font-semibold hover:bg-black transition-all shrink-0 cursor-pointer"
             >
-              <span>Ir a {nextChapter.shortLabel}</span>
+              <span>
+                {t("Ir a", "Go to")} {nextChapter.shortLabel}
+              </span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
@@ -167,7 +174,7 @@ export const SpatialPortfolioOS: React.FC = () => {
       {/* ================= APPLE macOS / visionOS FLOATING SPATIAL DOCK ================= */}
       <div className="fixed bottom-5 inset-x-0 z-50 flex justify-center px-4 pointer-events-none">
         <div className="pointer-events-auto p-1.5 rounded-full bg-white/85 backdrop-blur-2xl border border-black/[0.08] shadow-[0_20px_50px_rgba(0,0,0,0.12)] flex items-center gap-1">
-          {CHAPTERS.map((chap) => {
+          {chapters.map((chap) => {
             const active = activeChapter === chap.id;
             return (
               <button
@@ -183,11 +190,11 @@ export const SpatialPortfolioOS: React.FC = () => {
                 {active && (
                   <motion.div
                     layoutId="spatial-dock-pill"
-                    className="absolute inset-0 rounded-full bg-[#1d1d1f] shadow-sm -z-10"
+                    className="spatial-dock-active-pill absolute inset-0 rounded-full bg-[#1d1d1f] shadow-sm -z-10"
                     transition={{ type: "spring", stiffness: 380, damping: 30 }}
                   />
                 )}
-                <span className={active ? "text-[#0071e3]" : "text-current"}>
+                <span className={active ? "text-white" : "text-current"}>
                   {chap.icon}
                 </span>
                 <span className="hidden sm:inline">{chap.label}</span>
@@ -200,3 +207,9 @@ export const SpatialPortfolioOS: React.FC = () => {
     </div>
   );
 };
+
+export const SpatialPortfolioOS: React.FC = () => (
+  <SettingsProvider>
+    <SpatialStageContent />
+  </SettingsProvider>
+);

@@ -13,7 +13,7 @@ import {
   X,
   UserCheck,
 } from "lucide-react";
-
+import { useSettings } from "@/context/SettingsContext";
 import type { StageChapter } from "@/components/ui/SpatialPortfolioOS";
 
 type AvatarMood = "idle" | "coding" | "thinking" | "celebrating" | "speaking";
@@ -36,83 +36,106 @@ interface ActionOption {
   };
 }
 
-const ACTION_OPTIONS: ActionOption[] = [
-  {
-    id: "capabilities",
-    icon: <Code2 className="w-3.5 h-3.5 text-[#0071e3]" />,
-    label: "¿Qué puedo hacer?",
-    badge: "Stack",
-    mood: "coding",
-    response: {
-      title: "Backend & Mobile Fullstack",
-      description:
-        "Desarrollo backends seguros en Django & Node.js, apps móviles fluidas en Flutter y modelos relacionales en PostgreSQL con diseño en Figma.",
-      subtext: "Especializado en arquitecturas limpias y APIs de alto rendimiento.",
-      quickAction: {
-        label: "Explorar Habilidades",
-        chapter: "habilidades",
-      },
-    },
-  },
-  {
-    id: "sigif",
-    icon: <Rocket className="w-3.5 h-3.5 text-[#ff9500]" />,
-    label: "¿Cuál es mi mayor proyecto?",
-    badge: "Keynote",
-    mood: "celebrating",
-    response: {
-      title: "SIGIF: Sistema Financiero & Stock",
-      description:
-        "Plataforma empresarial completa con protección contra fuerza bruta, facturación con IVA del 19%, inventario automático y auditoría forense.",
-      subtext: "100% operativo en producción con Django y PostgreSQL.",
-      quickAction: {
-        label: "Ver Demo de SIGIF",
-        chapter: "sigif",
-      },
-    },
-  },
-  {
-    id: "availability",
-    icon: <Coffee className="w-3.5 h-3.5 text-[#34c759]" />,
-    label: "¿Estoy disponible para trabajar?",
-    badge: "Junior",
-    mood: "speaking",
-    response: {
-      title: "¡Sí, en etapa práctica activa!",
-      description:
-        "Estoy radicado en Medellín, Colombia y disponible para vinculación inmediata en modalidad remota o híbrida como Desarrollador Junior.",
-      subtext: "Abierto a retos de alto aprendizaje y proyectos ambiciosos.",
-      quickAction: {
-        label: "Armar un proyecto conmigo",
-        chapter: "crear",
-      },
-    },
-  },
-  {
-    id: "fun_fact",
-    icon: <Sparkles className="w-3.5 h-3.5 text-[#af52de]" />,
-    label: "Mi filosofía de código",
-    badge: "Apple Standard",
-    mood: "thinking",
-    response: {
-      title: "Simplicidad y Precisión",
-      description:
-        "No tolero el código desordenado ni las interfaces lentas. Prefiero soluciones elegantes y comprobadas con tests que resuelvan problemas reales.",
-      subtext: "Cuidando cada micro-detalle del diseño y del backend.",
-    },
-  },
-];
-
 interface AppleVectorAvatarProps {
   onNavigate?: (chapter: StageChapter) => void;
 }
 
 export const AppleVectorAvatar: React.FC<AppleVectorAvatarProps> = ({ onNavigate }) => {
+  const { t } = useSettings();
   const cardRef = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [activeAction, setActiveAction] = useState<ActionOption | null>(null);
+  const [activeActionId, setActiveActionId] = useState<string | null>(null);
   const [activeMood, setActiveMood] = useState<AvatarMood>("idle");
   const [isWaving, setIsWaving] = useState(false);
+
+  const actionOptions: ActionOption[] = [
+    {
+      id: "capabilities",
+      icon: <Code2 className="w-3.5 h-3.5 text-[#0071e3]" />,
+      label: t("¿Qué puedo hacer?", "What can I build?"),
+      badge: "Stack",
+      mood: "coding",
+      response: {
+        title: t("Backend & Mobile Fullstack", "Backend & Mobile Fullstack"),
+        description: t(
+          "Desarrollo backends seguros en Django & Node.js, apps móviles fluidas en Flutter y modelos relacionales en PostgreSQL con diseño en Figma.",
+          "I build secure backends in Django & Node.js, smooth mobile apps in Flutter, and relational models in PostgreSQL designed in Figma."
+        ),
+        subtext: t(
+          "Especializado en arquitecturas limpias y APIs de alto rendimiento.",
+          "Focused on clean architectures and high-performance APIs."
+        ),
+        quickAction: {
+          label: t("Explorar Habilidades", "Explore Skills"),
+          chapter: "habilidades",
+        },
+      },
+    },
+    {
+      id: "sigif",
+      icon: <Rocket className="w-3.5 h-3.5 text-[#ff9500]" />,
+      label: t("¿Cuál es mi mayor proyecto?", "What is my flagship project?"),
+      badge: "Keynote",
+      mood: "celebrating",
+      response: {
+        title: t("SIGIF: Sistema Financiero & Stock", "SIGIF: Enterprise Billing & Stock"),
+        description: t(
+          "Plataforma empresarial completa con protección contra fuerza bruta, facturación con IVA del 19%, inventario automático y auditoría forense.",
+          "Complete enterprise platform featuring brute-force guard, 19% VAT billing, automated inventory, and forensic auditing."
+        ),
+        subtext: t(
+          "100% operativo en producción con Django y PostgreSQL.",
+          "100% live in production powered by Django and PostgreSQL."
+        ),
+        quickAction: {
+          label: t("Ver Demo de SIGIF", "View SIGIF Case Study"),
+          chapter: "sigif",
+        },
+      },
+    },
+    {
+      id: "availability",
+      icon: <Coffee className="w-3.5 h-3.5 text-[#34c759]" />,
+      label: t("¿Estoy disponible para trabajar?", "Am I available for hire?"),
+      badge: "Junior",
+      mood: "speaking",
+      response: {
+        title: t("¡Sí, en etapa práctica activa!", "Yes, in active practical stage!"),
+        description: t(
+          "Estoy radicado en Medellín, Colombia y disponible para vinculación inmediata en modalidad remota o híbrida como Desarrollador Junior.",
+          "Based in Medellín, Colombia and available for immediate remote or hybrid onboarding as a Junior Developer."
+        ),
+        subtext: t(
+          "Abierto a retos de alto aprendizaje y proyectos ambiciosos.",
+          "Open to high-learning challenges and ambitious projects."
+        ),
+        quickAction: {
+          label: t("Armar un proyecto conmigo", "Build a project with me"),
+          chapter: "crear",
+        },
+      },
+    },
+    {
+      id: "fun_fact",
+      icon: <Sparkles className="w-3.5 h-3.5 text-[#af52de]" />,
+      label: t("Mi filosofía de código", "My coding philosophy"),
+      badge: "Apple Standard",
+      mood: "thinking",
+      response: {
+        title: t("Simplicidad y Precisión", "Simplicity & Precision"),
+        description: t(
+          "No tolero el código desordenado ni las interfaces lentas. Prefiero soluciones elegantes y comprobadas con tests que resuelvan problemas reales.",
+          "Zero tolerance for messy code or sluggish UIs. I build test-verified, elegant solutions that solve real business problems."
+        ),
+        subtext: t(
+          "Cuidando cada micro-detalle del diseño y del backend.",
+          "Crafting every micro-detail across design and backend."
+        ),
+      },
+    },
+  ];
+
+  const activeAction = actionOptions.find((a) => a.id === activeActionId) || null;
 
   // Mouse tilt motion values
   const mouseX = useMotionValue(0);
@@ -155,20 +178,20 @@ export const AppleVectorAvatar: React.FC<AppleVectorAvatarProps> = ({ onNavigate
     setIsWaving(true);
     setTimeout(() => setIsWaving(false), 800);
     setMenuOpen((prev) => !prev);
-    if (!menuOpen && !activeAction) {
+    if (!menuOpen && !activeActionId) {
       setActiveMood("speaking");
     }
   };
 
   const selectOption = (opt: ActionOption) => {
-    setActiveAction(opt);
+    setActiveActionId(opt.id);
     setActiveMood(opt.mood);
     setIsWaving(true);
     setTimeout(() => setIsWaving(false), 600);
   };
 
   const closeDialog = () => {
-    setActiveAction(null);
+    setActiveActionId(null);
     setActiveMood("idle");
   };
 
@@ -206,7 +229,11 @@ export const AppleVectorAvatar: React.FC<AppleVectorAvatarProps> = ({ onNavigate
             className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-[#0071e3] hover:text-[#005bb5] px-2.5 py-1 rounded-full bg-[#0071e3]/10 hover:bg-[#0071e3]/15 transition-all cursor-pointer"
           >
             <Sparkles className="w-3 h-3" />
-            <span>{menuOpen ? "Cerrar menú" : "Tócame · Opciones"}</span>
+            <span>
+              {menuOpen
+                ? t("Cerrar menú", "Close menu")
+                : t("Tócame · Opciones", "Tap me · Options")}
+            </span>
           </button>
         </div>
 
@@ -230,7 +257,9 @@ export const AppleVectorAvatar: React.FC<AppleVectorAvatarProps> = ({ onNavigate
               className="absolute top-3 px-3 py-1 rounded-full bg-white/90 border border-black/[0.06] shadow-sm text-[11px] text-[#86868b] flex items-center gap-1.5 z-20 pointer-events-none backdrop-blur-md"
             >
               <UserCheck className="w-3 h-3 text-[#0071e3]" />
-              <span>Haz clic en mí para interactuar</span>
+              <span>
+                {t("Haz clic en mí para interactuar", "Click on me to interact")}
+              </span>
             </motion.div>
           )}
 
@@ -274,10 +303,26 @@ export const AppleVectorAvatar: React.FC<AppleVectorAvatarProps> = ({ onNavigate
                 exit={{ opacity: 0, scale: 0.8, y: 10 }}
                 className="absolute bottom-3.5 z-20 px-3 py-1 rounded-full bg-white/95 border border-black/[0.08] shadow-md text-[11px] font-semibold text-[#1d1d1f] flex items-center gap-1.5 pointer-events-none backdrop-blur-md"
               >
-                {activeMood === "coding" && <span className="text-[#0071e3]">💻 Modo Desarrollo Activo</span>}
-                {activeMood === "celebrating" && <span className="text-[#ff9500]">🚀 SIGIF en Producción</span>}
-                {activeMood === "speaking" && <span className="text-[#34c759]">☕ Disponible para proyectos</span>}
-                {activeMood === "thinking" && <span className="text-[#af52de]">✨ Código limpio y probado</span>}
+                {activeMood === "coding" && (
+                  <span className="text-[#0071e3]">
+                    {t("💻 Modo Desarrollo Activo", "💻 Active Dev Mode")}
+                  </span>
+                )}
+                {activeMood === "celebrating" && (
+                  <span className="text-[#ff9500]">
+                    {t("🚀 SIGIF en Producción", "🚀 SIGIF Live in Prod")}
+                  </span>
+                )}
+                {activeMood === "speaking" && (
+                  <span className="text-[#34c759]">
+                    {t("☕ Disponible para proyectos", "☕ Available for projects")}
+                  </span>
+                )}
+                {activeMood === "thinking" && (
+                  <span className="text-[#af52de]">
+                    {t("✨ Código limpio y probado", "✨ Clean & tested code")}
+                  </span>
+                )}
               </motion.div>
             )}
           </AnimatePresence>
@@ -348,9 +393,9 @@ export const AppleVectorAvatar: React.FC<AppleVectorAvatarProps> = ({ onNavigate
               className="mt-4 space-y-1.5 overflow-hidden"
             >
               <p className="text-[10px] font-mono uppercase tracking-wider text-[#86868b] px-1 mb-1">
-                SELECCIONA UNA PREGUNTA / ACCIÓN
+                {t("SELECCIONA UNA PREGUNTA / ACCIÓN", "SELECT A QUESTION / ACTION")}
               </p>
-              {ACTION_OPTIONS.map((opt) => {
+              {actionOptions.map((opt) => {
                 const isSelected = activeAction?.id === opt.id;
                 return (
                   <button
@@ -389,7 +434,7 @@ export const AppleVectorAvatar: React.FC<AppleVectorAvatarProps> = ({ onNavigate
 
           <div className="flex items-center gap-1 text-[11px] text-[#34c759] font-semibold">
             <CheckCircle2 className="w-3.5 h-3.5" />
-            <span>En Etapa Práctica</span>
+            <span>{t("En Etapa Práctica", "In Practical Stage")}</span>
           </div>
         </div>
 

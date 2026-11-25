@@ -16,7 +16,8 @@ import {
   BookOpen,
   Sparkles,
 } from "lucide-react";
-import { PORTFOLIO_DATA } from "@/data/portfolio";
+import { getPortfolioData } from "@/data/portfolio";
+import { useSettings } from "@/context/SettingsContext";
 
 const skillIconMap: Record<string, React.ReactNode> = {
   django: <Terminal className="w-5 h-5 text-[#0C4B33]" />,
@@ -82,21 +83,22 @@ const skillSnippetMap: Record<
   },
 };
 
-const softIcons: Record<string, React.ReactNode> = {
-  "Lógica de Programación": <Brain className="w-4 h-4 text-[#0071e3]" />,
-  "Comunicación Asertiva": <MessageSquareCode className="w-4 h-4 text-[#34c759]" />,
-  "Trabajo en Equipo": <Users className="w-4 h-4 text-[#ff9500]" />,
-  "Aprendizaje Autónomo": <BookOpen className="w-4 h-4 text-[#af52de]" />,
-};
+const softIconList = [
+  <Brain key="brain" className="w-4 h-4 text-[#0071e3]" />,
+  <MessageSquareCode key="msg" className="w-4 h-4 text-[#34c759]" />,
+  <Users key="users" className="w-4 h-4 text-[#ff9500]" />,
+  <BookOpen key="book" className="w-4 h-4 text-[#af52de]" />,
+];
 
 const appleEase = [0.16, 1, 0.3, 1] as const;
 
 export const SkillsSection: React.FC = () => {
+  const { language, t } = useSettings();
+  const data = getPortfolioData(language);
   const [selectedSkillId, setSelectedSkillId] = useState<string>("django");
   const activeSnippet = skillSnippetMap[selectedSkillId] || skillSnippetMap.django;
   const activeSkillObj =
-    PORTFOLIO_DATA.coreSkills.find((s) => s.id === selectedSkillId) ||
-    PORTFOLIO_DATA.coreSkills[0];
+    data.coreSkills.find((s) => s.id === selectedSkillId) || data.coreSkills[0];
 
   return (
     <section id="habilidades" className="py-16 md:py-24 bg-[#fbfbfd]">
@@ -104,24 +106,27 @@ export const SkillsSection: React.FC = () => {
         {/* Section Header */}
         <div className="mb-12">
           <p className="text-[11px] font-semibold uppercase tracking-widest text-[#86868b] mb-3">
-            Capacidades &amp; Habilidades Técnicas
+            {t("Capacidades & Habilidades Técnicas", "Core Capabilities & Technical Skills")}
           </p>
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-[-0.035em] text-[#1d1d1f] mb-3">
-                Stack Core y Especialización
+                {t("Stack Core y Especialización", "Core Stack & Specialization")}
               </h2>
               <p className="text-base text-[#86868b] max-w-2xl leading-relaxed">
-                Toca o pasa el cursor sobre cualquier tecnología para ver un ejemplo real de cómo la implemento en producción.
+                {t(
+                  "Toca o pasa el cursor sobre cualquier tecnología para ver un ejemplo real de cómo la implemento en producción.",
+                  "Tap or hover over any technology card to inspect a live production snippet of how I use it."
+                )}
               </p>
             </div>
             <span className="text-xs font-semibold px-3.5 py-1.5 rounded-full bg-white border border-black/[0.08] text-[#1d1d1f] shadow-2xs self-start md:self-auto">
-              5 Tecnologías Principales
+              {t("5 Tecnologías Principales", "5 Core Technologies")}
             </span>
           </div>
         </div>
 
-        {/* Live Animated Code/Architecture Inspector Banner (Like the Code Reveal!) */}
+        {/* Live Animated Code/Architecture Inspector Banner */}
         <motion.div
           layout
           className="mb-10 rounded-3xl bg-white border border-black/[0.08] p-5 sm:p-7 shadow-[0_20px_50px_rgba(0,0,0,0.04)] grid grid-cols-1 lg:grid-cols-12 gap-6 items-center"
@@ -129,7 +134,7 @@ export const SkillsSection: React.FC = () => {
           <div className="lg:col-span-5">
             <div className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-[#0071e3] bg-[#0071e3]/10 px-3 py-1 rounded-full mb-3">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>Inspector Interactivo en Vivo</span>
+              <span>{t("Inspector Interactivo en Vivo", "Live Interactive Inspector")}</span>
             </div>
             <h3 className="text-xl font-bold text-[#1d1d1f] mb-1">
               {activeSkillObj.name}
@@ -140,7 +145,9 @@ export const SkillsSection: React.FC = () => {
             {/* Animated Mastery Bar */}
             <div>
               <div className="flex justify-between text-xs font-semibold mb-1.5">
-                <span className="text-[#86868b]">Dominio Práctico</span>
+                <span className="text-[#86868b]">
+                  {t("Dominio Práctico", "Practical Proficiency")}
+                </span>
                 <span className="text-[#0071e3] font-mono">{activeSnippet.percentage}%</span>
               </div>
               <div className="h-2 w-full rounded-full bg-[#f5f5f7] overflow-hidden">
@@ -207,7 +214,7 @@ export const SkillsSection: React.FC = () => {
 
         {/* 5 Core Skills Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-          {PORTFOLIO_DATA.coreSkills.map((skill, index) => {
+          {data.coreSkills.map((skill, index) => {
             const isSelected = selectedSkillId === skill.id;
             const pct = skillSnippetMap[skill.id]?.percentage || 85;
             return (
@@ -295,24 +302,27 @@ export const SkillsSection: React.FC = () => {
                   <Cpu className="w-5 h-5 text-[#34c759]" />
                 </div>
                 <span className="text-[11px] font-semibold text-white/70 px-3 py-1 rounded-full bg-white/10">
-                  Desarrollador Junior
+                  {t("Desarrollador Junior", "Junior Developer")}
                 </span>
               </div>
 
               <h3 className="text-xl font-bold tracking-tight text-white mb-2">
-                Enfoque Práctico
+                {t("Enfoque Práctico", "Hands-On Engineering")}
               </h3>
 
               <p className="text-sm text-white/70 leading-relaxed mb-6">
-                Más allá de la teoría, aplico buenas prácticas de ingeniería de software en proyectos reales: arquitectura modular, control de versiones riguroso con Git y código limpio orientado a producción.
+                {t(
+                  "Más allá de la teoría, aplico buenas prácticas de ingeniería de software en proyectos reales: arquitectura modular, control de versiones riguroso con Git y código limpio orientado a producción.",
+                  "Beyond theory, I apply software engineering best practices in real projects: modular architecture, strict Git version control, and production-ready clean code."
+                )}
               </p>
             </div>
 
             <div className="pt-4 border-t border-white/10 flex items-center justify-between text-xs text-white/60">
-              <span>Etapa Práctica Activa</span>
+              <span>{t("Etapa Práctica Activa", "Active Internship Stage")}</span>
               <span className="text-[#34c759] font-semibold flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-[#34c759] animate-pulse" />
-                Disponible
+                {t("Disponible", "Available")}
               </span>
             </div>
           </motion.div>
@@ -321,10 +331,10 @@ export const SkillsSection: React.FC = () => {
         {/* Soft Skills Section */}
         <div className="pt-10 border-t border-black/[0.06]">
           <p className="text-[11px] font-semibold uppercase tracking-widest text-[#86868b] mb-6">
-            Competencias y Habilidades Personales
+            {t("Competencias y Habilidades Personales", "Soft Skills & Personal Competencies")}
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {PORTFOLIO_DATA.softSkills.map((item, i) => (
+            {data.softSkills.map((item, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 12 }}
@@ -334,7 +344,7 @@ export const SkillsSection: React.FC = () => {
                 className="p-5 rounded-2xl bg-white border border-black/[0.05] shadow-2xs hover:border-black/[0.15] transition-all"
               >
                 <div className="w-8 h-8 rounded-xl bg-[#f5f5f7] flex items-center justify-center mb-3">
-                  {softIcons[item.title] || <Brain className="w-4 h-4 text-[#0071e3]" />}
+                  {softIconList[i % softIconList.length]}
                 </div>
                 <h4 className="text-sm font-semibold text-[#1d1d1f] mb-1">
                   {item.title}

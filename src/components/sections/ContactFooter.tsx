@@ -36,6 +36,7 @@ import {
 } from "lucide-react";
 import { GithubIcon, LinkedInIcon, WhatsAppIcon } from "@/components/ui/Icons";
 import { PORTFOLIO_DATA } from "@/data/portfolio";
+import { useSettings } from "@/context/SettingsContext";
 
 interface OptionItem {
   id: string;
@@ -158,6 +159,7 @@ const TIMELINES = [
 ];
 
 export const ContactFooter: React.FC = () => {
+  const { t } = useSettings();
   const [copied, setCopied] = useState(false);
 
   // Interactive Interview Wizard State
@@ -271,15 +273,20 @@ export const ContactFooter: React.FC = () => {
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-black/[0.08] shadow-2xs mb-4">
             <Sparkles className="w-3.5 h-3.5 text-[#0071e3]" />
             <span className="text-[11px] font-semibold uppercase tracking-widest text-[#1d1d1f]">
-              Asistente Interactivo de Proyectos
+              {t("Asistente Interactivo de Proyectos", "Interactive Project Builder")}
             </span>
           </div>
           <h2 className="text-3xl sm:text-5xl font-semibold tracking-[-0.035em] text-[#1d1d1f] leading-[1.08] mb-4">
-            Arma tu idea paso a paso.{" "}
-            <span className="text-[#86868b] font-normal">Sin palabras técnicas.</span>
+            {t("Arma tu idea paso a paso.", "Build your idea step by step.")}{" "}
+            <span className="text-[#86868b] font-normal">
+              {t("Sin palabras técnicas.", "No technical jargon.")}
+            </span>
           </h2>
           <p className="text-base sm:text-lg text-[#86868b] leading-relaxed">
-            No necesitas saber de programación. Elige en este menú interactivo qué quieres lograr y mira cómo se construye la estructura de tu proyecto en 3D antes de enviármela al correo.
+            {t(
+              "No necesitas saber de programación. Elige en este menú interactivo qué quieres lograr y mira cómo se construye la estructura de tu proyecto en 3D antes de enviármela al correo.",
+              "No coding knowledge required. Choose what you want to achieve in this interactive menu and watch your 3D project structure assemble live before sending it to my email."
+            )}
           </p>
         </div>
 

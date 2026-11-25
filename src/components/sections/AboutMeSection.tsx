@@ -3,7 +3,8 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { GraduationCap, Award, ArrowUpRight, Sparkles } from "lucide-react";
-import { PORTFOLIO_DATA } from "@/data/portfolio";
+import { getPortfolioData } from "@/data/portfolio";
+import { useSettings } from "@/context/SettingsContext";
 import type { StageChapter } from "@/components/ui/SpatialPortfolioOS";
 
 interface AboutMeSectionProps {
@@ -13,13 +14,16 @@ interface AboutMeSectionProps {
 const appleEase = [0.16, 1, 0.3, 1] as const;
 
 export const AboutMeSection: React.FC<AboutMeSectionProps> = ({ onNavigate }) => {
-  const philosophyWords = PORTFOLIO_DATA.philosophyWords.split(" ");
+  const { language, t } = useSettings();
+  const data = getPortfolioData(language);
+  const philosophyWords = data.philosophyWords.split(" ");
 
   return (
     <section id="sobre-mi" className="py-16 md:py-24 bg-white border-t border-black/[0.06]">
       <div className="max-w-6xl mx-auto px-6 sm:px-10">
         {/* Animated Apple Philosophy Banner */}
         <motion.div
+          key={language}
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-40px" }}
@@ -28,12 +32,12 @@ export const AboutMeSection: React.FC<AboutMeSectionProps> = ({ onNavigate }) =>
         >
           <div className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-widest text-[#0071e3] mb-4">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Filosofía de Ingeniería</span>
+            <span>{t("Filosofía de Ingeniería", "Engineering Philosophy")}</span>
           </div>
           <h3 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-[-0.03em] leading-[1.28] text-[#1d1d1f]">
             {philosophyWords.map((word, i) => (
               <motion.span
-                key={i}
+                key={`${language}-${i}`}
                 initial={{ opacity: 0.15, y: 6 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -52,7 +56,7 @@ export const AboutMeSection: React.FC<AboutMeSectionProps> = ({ onNavigate }) =>
 
         {/* Section Pill */}
         <p className="text-[11px] font-semibold uppercase tracking-widest text-[#86868b] mb-4">
-          Sobre Mí · Perfil Profesional
+          {t("Sobre Mí · Perfil Profesional", "About Me · Professional Profile")}
         </p>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
@@ -65,20 +69,37 @@ export const AboutMeSection: React.FC<AboutMeSectionProps> = ({ onNavigate }) =>
             className="lg:col-span-7"
           >
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-[-0.035em] text-[#1d1d1f] leading-[1.12] mb-6">
-              Desarrollador Junior comprometido con crear soluciones simples, eficientes y bien estructuradas.
+              {t(
+                "Desarrollador Junior comprometido con crear soluciones simples, eficientes y bien estructuradas.",
+                "Junior Developer committed to building simple, efficient, and well-structured software solutions."
+              )}
             </h2>
 
-            <div className="space-y-4 text-base sm:text-lg text-[#86868b] leading-relaxed mb-8">
-              <p>
-                Actualmente me encuentro en mi <strong>etapa práctica</strong> como Tecnólogo en Análisis y Desarrollo de Software (SENA). Durante este período he fortalecido mi criterio técnico construyendo software real, abordando tanto la lógica de negocio en el backend con <strong>Django y Node.js</strong>, como experiencias visuales intuitivas con <strong>Flutter y Figma</strong>.
-              </p>
-              <p>
-                No me conformo con que el código &quot;simplemente funcione&quot;: me enfoco en entender el porqué de cada decisión arquitectónica, modelar bases de datos seguras con <strong>PostgreSQL</strong> y optimizar la experiencia de usuario bajo los más altos estándares de calidad.
-              </p>
-              <p className="text-sm font-medium text-[#1d1d1f]">
-                &quot;Me gusta aprender constantemente, colaborar de manera proactiva en equipo y resolver desafíos reales con código limpio.&quot;
-              </p>
-            </div>
+            {language === "es" ? (
+              <div className="space-y-4 text-base sm:text-lg text-[#86868b] leading-relaxed mb-8">
+                <p>
+                  Actualmente me encuentro en mi <strong>etapa práctica</strong> como Tecnólogo en Análisis y Desarrollo de Software (SENA). Durante este período he fortalecido mi criterio técnico construyendo software real, abordando tanto la lógica de negocio en el backend con <strong>Django y Node.js</strong>, como experiencias visuales intuitivas con <strong>Flutter y Figma</strong>.
+                </p>
+                <p>
+                  No me conformo con que el código &quot;simplemente funcione&quot;: me enfoco en entender el porqué de cada decisión arquitectónica, modelar bases de datos seguras con <strong>PostgreSQL</strong> y optimizar la experiencia de usuario bajo los más altos estándares de calidad.
+                </p>
+                <p className="text-sm font-medium text-[#1d1d1f]">
+                  &quot;Me gusta aprender constantemente, colaborar de manera proactiva en equipo y resolver desafíos reales con código limpio.&quot;
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4 text-base sm:text-lg text-[#86868b] leading-relaxed mb-8">
+                <p>
+                  I am currently in my <strong>practical internship stage</strong> as a Software Analysis and Development Technologist (SENA). Throughout this journey, I have sharpened my engineering judgment building production software—handling complex backend logic with <strong>Django and Node.js</strong> as well as fluid visual experiences with <strong>Flutter and Figma</strong>.
+                </p>
+                <p>
+                  I don&apos;t settle for code that &quot;just works&quot;: I focus on understanding the reasoning behind every architectural decision, modeling secure relational databases with <strong>PostgreSQL</strong>, and polishing the user experience to the highest quality standards.
+                </p>
+                <p className="text-sm font-medium text-[#1d1d1f]">
+                  &quot;I thrive on continuous learning, proactive team collaboration, and solving real-world problems with clean code.&quot;
+                </p>
+              </div>
+            )}
 
             <div className="flex flex-wrap gap-3">
               <button
@@ -86,14 +107,15 @@ export const AboutMeSection: React.FC<AboutMeSectionProps> = ({ onNavigate }) =>
                 onClick={() => onNavigate?.("crear")}
                 className="inline-flex items-center gap-1.5 text-xs font-semibold px-5 py-2.5 rounded-full bg-[#1d1d1f] text-white hover:bg-black transition-colors cursor-pointer"
               >
-                Conversar sobre una oportunidad <ArrowUpRight className="w-3.5 h-3.5" />
+                {t("Conversar sobre una oportunidad", "Discuss an opportunity")}{" "}
+                <ArrowUpRight className="w-3.5 h-3.5" />
               </button>
               <button
                 type="button"
                 onClick={() => onNavigate?.("sigif")}
                 className="inline-flex items-center gap-1.5 text-xs font-semibold px-5 py-2.5 rounded-full border border-black/[0.1] text-[#1d1d1f] hover:bg-[#f5f5f7] transition-colors cursor-pointer"
               >
-                Ver proyecto SIGIF
+                {t("Ver proyecto SIGIF", "View SIGIF Project")}
               </button>
             </div>
           </motion.div>
@@ -115,15 +137,18 @@ export const AboutMeSection: React.FC<AboutMeSectionProps> = ({ onNavigate }) =>
                 </div>
                 <div>
                   <h4 className="text-sm font-bold text-[#1d1d1f]">
-                    Tecnólogo en ADSO
+                    {t("Tecnólogo en ADSO", "Software Analysis & Dev Technologist")}
                   </h4>
                   <p className="text-[11px] text-[#86868b]">
-                    SENA · En Etapa Práctica
+                    {t("SENA · En Etapa Práctica", "SENA · Practical Internship Stage")}
                   </p>
                 </div>
               </div>
               <p className="text-xs text-[#86868b] leading-relaxed">
-                Análisis y Desarrollo de Software: formación integral en diseño de bases de datos, patrones de arquitectura, POO, pruebas unitarias y desarrollo web/móvil.
+                {t(
+                  "Análisis y Desarrollo de Software: formación integral en diseño de bases de datos, patrones de arquitectura, POO, pruebas unitarias y desarrollo web/móvil.",
+                  "Comprehensive training in relational database design, architectural patterns, OOP, automated testing, and fullstack web/mobile development."
+                )}
               </p>
             </motion.div>
 
@@ -142,15 +167,21 @@ export const AboutMeSection: React.FC<AboutMeSectionProps> = ({ onNavigate }) =>
                 </div>
                 <div>
                   <h4 className="text-sm font-bold text-[#1d1d1f]">
-                    Bachiller Académico &amp; Autodidacta
+                    {t(
+                      "Bachiller Académico & Autodidacta",
+                      "Academic High School & Self-Taught Dev"
+                    )}
                   </h4>
                   <p className="text-[11px] text-[#86868b]">
-                    En formación técnica continua
+                    {t("En formación técnica continua", "Continuous technical specialization")}
                   </p>
                 </div>
               </div>
               <p className="text-xs text-[#86868b] leading-relaxed">
-                Profundización constante en arquitecturas modernas, TypeScript, seguridad de APIs REST y estándares internacionales de diseño como Apple Human Interface.
+                {t(
+                  "Profundización constante en arquitecturas modernas, TypeScript, seguridad de APIs REST y estándares internacionales de diseño como Apple Human Interface.",
+                  "Constant deep-diving into modern architectures, TypeScript, REST API security, and international UI standards like Apple Human Interface."
+                )}
               </p>
             </motion.div>
 
@@ -164,10 +195,13 @@ export const AboutMeSection: React.FC<AboutMeSectionProps> = ({ onNavigate }) =>
             >
               <div>
                 <p className="text-[11px] font-semibold text-[#86868b] uppercase tracking-wider">
-                  Ubicación &amp; Modalidad
+                  {t("Ubicación & Modalidad", "Location & Work Mode")}
                 </p>
                 <p className="text-sm font-bold text-[#1d1d1f]">
-                  Medellín, Colombia · Remoto / Híbrido
+                  {t(
+                    "Medellín, Colombia · Remoto / Híbrido",
+                    "Medellín, Colombia · Remote / Hybrid"
+                  )}
                 </p>
               </div>
               <span className="w-2.5 h-2.5 rounded-full bg-[#34c759] animate-pulse" />

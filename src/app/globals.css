@@ -9,18 +9,112 @@
     background: #fff;
     color: #1d1d1f;
     overflow-x: hidden;
+    transition: background-color 0.35s ease, color 0.35s ease;
+  }
+
+  html.dark {
+    background: #000000;
+    color: #f5f5f7;
+    color-scheme: dark;
   }
 
   body {
-    background: #fff;
+    background: inherit;
+    color: inherit;
   }
 
   ::selection {
-    background: rgba(0, 113, 227, 0.14);
-    color: #000;
+    background: rgba(0, 113, 227, 0.22);
+    color: inherit;
   }
 
   * {
     box-sizing: border-box;
   }
+}
+
+/* ==========================================================================
+   APPLE macOS / iOS DARK MODE THEME ENGINE
+   Automatically adapts all Apple Light Mode surfaces, borders & typography
+   ========================================================================== */
+html.dark .bg-white {
+  background-color: #121214 !important;
+}
+
+html.dark .bg-white\/95,
+html.dark .bg-white\/90 {
+  background-color: rgba(22, 22, 24, 0.92) !important;
+}
+
+html.dark .bg-white\/85,
+html.dark .bg-white\/75 {
+  background-color: rgba(24, 24, 27, 0.82) !important;
+}
+
+html.dark .bg-\[\#fbfbfd\],
+html.dark .bg-\[\#fafafa\] {
+  background-color: #09090b !important;
+}
+
+html.dark .bg-\[\#f5f5f7\],
+html.dark .hover\:bg-\[\#f5f5f7\]:hover,
+html.dark .hover\:bg-\[\#f0f0f5\]:hover {
+  background-color: #1c1c1e !important;
+}
+
+html.dark .from-\[\#fbfbfd\] {
+  --tw-gradient-from: #141417 !important;
+}
+
+html.dark .via-\[\#f7f8fa\] {
+  --tw-gradient-via: #18181c !important;
+}
+
+html.dark .to-\[\#f5f5f7\],
+html.dark .to-\[\#f4f5f8\],
+html.dark .to-\[\#eff1f5\] {
+  --tw-gradient-to: #1c1c21 !important;
+}
+
+html.dark .text-\[\#1d1d1f\] {
+  color: #f5f5f7 !important;
+}
+
+html.dark .hover\:text-\[\#1d1d1f\]:hover {
+  color: #ffffff !important;
+}
+
+html.dark .text-\[\#86868b\] {
+  color: #a1a1a6 !important;
+}
+
+html.dark .border-black\/\[0\.04\],
+html.dark .border-black\/\[0\.05\],
+html.dark .border-black\/\[0\.06\],
+html.dark .border-black\/\[0\.07\],
+html.dark .border-black\/\[0\.08\],
+html.dark .border-black\/\[0\.1\],
+html.dark .border-black\/\[0\.12\],
+html.dark .border-black\/\[0\.15\] {
+  border-color: rgba(255, 255, 255, 0.11) !important;
+}
+
+html.dark .divide-black\/\[0\.06\] > :not(:last-child) {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Inverted Primary Action Buttons in Dark Mode */
+html.dark button.bg-\[\#1d1d1f\],
+html.dark a.bg-\[\#1d1d1f\] {
+  background-color: #0071e3 !important;
+  color: #ffffff !important;
+}
+
+html.dark button.bg-\[\#1d1d1f\]:hover,
+html.dark a.bg-\[\#1d1d1f\]:hover {
+  background-color: #0077ed !important;
+}
+
+html.dark .bg-black\/\[0\.06\] {
+  background-color: rgba(255, 255, 255, 0.1) !important;
 }
