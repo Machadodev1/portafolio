@@ -66,8 +66,8 @@ export const PORTFOLIO_DATA: PortfolioData = {
     location: "Medellín, Colombia",
     github: "https://github.com/machadodev1",
     linkedin: "https://www.linkedin.com/in/machadodev1",
-    whatsapp: "https://wa.me/573126691941",
-    phone: "+57 312 669 1941",
+    whatsapp: "https://wa.me/573145827883",
+    phone: "+57 314 582 7883",
     email: "machadoandres444@gmail.com",
   },
   navigation: [

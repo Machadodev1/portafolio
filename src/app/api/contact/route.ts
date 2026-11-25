@@ -4,17 +4,15 @@ import { sendContactEmails } from "@/lib/email";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, email, message } = body;
+    const { name, email, message, project } = body;
 
-    // Validación básica
-    if (!name || !email || !message) {
+    if (!name || !email) {
       return NextResponse.json(
-        { error: "Todos los campos (nombre, correo y mensaje) son requeridos." },
+        { error: "Por favor ingresa tu nombre y tu correo electrónico." },
         { status: 400 }
       );
     }
 
-    // Validación básica de formato email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return NextResponse.json(
@@ -23,13 +21,23 @@ export async function POST(request: Request) {
       );
     }
 
-    // Enviar correos (notificación al admin + respuesta automática al usuario)
-    const result = await sendContactEmails({ name, email, message });
+    const finalMessage =
+      message && message.trim().length > 0
+        ? message
+        : "Proyecto configurado mediante el asistente interactivo del portafolio.";
+
+    const result = await sendContactEmails({
+      name,
+      email,
+      message: finalMessage,
+      project,
+    });
 
     return NextResponse.json(
       {
         success: true,
-        message: "Tu mensaje ha sido enviado correctamente y se ha enviado una confirmación a tu correo.",
+        message:
+          "Tu proyecto ha sido enviado correctamente y hemos mandado el resumen a tu correo.",
         result,
       },
       { status: 200 }

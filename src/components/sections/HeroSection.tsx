@@ -6,6 +6,7 @@ import { ArrowUpRight, MessageSquare, Terminal, Smartphone, Server, Layers, Data
 import { PORTFOLIO_DATA } from "@/data/portfolio";
 import { GithubIcon } from "@/components/ui/Icons";
 import { AppleVectorAvatar } from "@/components/ui/AppleVectorAvatar";
+import type { StageChapter } from "@/components/ui/SpatialPortfolioOS";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -23,8 +24,12 @@ const skillIcons: Record<string, React.ReactNode> = {
   postgresql: <Database className="w-3.5 h-3.5 text-[#336791]" />,
 };
 
-export const HeroSection: React.FC = () => (
-  <section id="inicio" className="min-h-screen pt-28 pb-20 flex items-center bg-white overflow-hidden">
+interface HeroSectionProps {
+  onNavigate?: (chapter: StageChapter) => void;
+}
+
+export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => (
+  <section id="inicio" className="min-h-[88vh] pt-24 pb-16 flex items-center bg-white overflow-hidden">
     <div className="max-w-6xl mx-auto px-6 sm:px-10 w-full">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-12 items-center">
 
@@ -46,7 +51,7 @@ export const HeroSection: React.FC = () => (
           {/* Headline */}
           <motion.h1
             {...fade(0.1)}
-            className="text-[42px] sm:text-[52px] md:text-[62px] font-semibold tracking-[-0.035em] leading-[1.06] text-[#1d1d1f] mb-6"
+            className="text-[40px] sm:text-[50px] md:text-[60px] font-semibold tracking-[-0.035em] leading-[1.06] text-[#1d1d1f] mb-6"
           >
             Soy Andrés Machado.{" "}
             <span className="text-[#86868b] block sm:inline font-normal">
@@ -62,37 +67,41 @@ export const HeroSection: React.FC = () => (
           {/* Primary Capabilities & Skills Badges */}
           <motion.div {...fade(0.28)} className="mb-10">
             <p className="text-[11px] font-semibold uppercase tracking-widest text-[#86868b] mb-3">
-              Habilidades Principales
+              Habilidades Principales (Toca para ver en detalle)
             </p>
             <div className="flex flex-wrap gap-2">
               {PORTFOLIO_DATA.coreSkills.map((skill) => (
-                <div
+                <button
                   key={skill.id}
-                  className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-black/[0.08] bg-[#fbfbfd] hover:bg-white hover:border-[#0071e3]/30 hover:shadow-sm transition-all duration-200 select-none cursor-default"
+                  type="button"
+                  onClick={() => onNavigate?.("habilidades")}
+                  className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-black/[0.08] bg-[#fbfbfd] hover:bg-white hover:border-[#0071e3]/35 hover:shadow-sm transition-all duration-200 select-none cursor-pointer"
                 >
                   {skillIcons[skill.id]}
                   <span className="text-xs font-semibold text-[#1d1d1f]">
                     {skill.name}
                   </span>
-                </div>
+                </button>
               ))}
             </div>
           </motion.div>
 
           {/* CTAs */}
           <motion.div {...fade(0.35)} className="flex flex-wrap items-center gap-3">
-            <a
-              href="#contacto"
-              className="inline-flex items-center gap-2 text-sm font-medium px-6 py-3 rounded-full bg-[#1d1d1f] text-white hover:bg-black transition-colors shadow-sm"
+            <button
+              type="button"
+              onClick={() => onNavigate?.("crear")}
+              className="inline-flex items-center gap-2 text-sm font-medium px-6 py-3 rounded-full bg-[#1d1d1f] text-white hover:bg-black transition-colors shadow-sm cursor-pointer"
             >
-              <MessageSquare className="w-4 h-4" /> Contáctame
-            </a>
-            <a
-              href="#habilidades"
-              className="inline-flex items-center gap-1.5 text-sm font-medium px-5 py-3 rounded-full border border-black/[0.12] text-[#1d1d1f] hover:bg-[#f5f5f7] transition-colors"
+              <MessageSquare className="w-4 h-4" /> Armar un Proyecto
+            </button>
+            <button
+              type="button"
+              onClick={() => onNavigate?.("habilidades")}
+              className="inline-flex items-center gap-1.5 text-sm font-medium px-5 py-3 rounded-full border border-black/[0.12] text-[#1d1d1f] hover:bg-[#f5f5f7] transition-colors cursor-pointer"
             >
               Ver Habilidades <ArrowUpRight className="w-4 h-4" />
-            </a>
+            </button>
             <a
               href={PORTFOLIO_DATA.personal.github}
               target="_blank"
@@ -105,9 +114,9 @@ export const HeroSection: React.FC = () => (
 
         </div>
 
-        {/* Right Column: Apple Vector Avatar (Interactive, Lightweight, Smooth) */}
+        {/* Right Column: Apple 3D Cutout Avatar */}
         <div className="lg:col-span-5 flex justify-center">
-          <AppleVectorAvatar />
+          <AppleVectorAvatar onNavigate={onNavigate} />
         </div>
 
       </div>

@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
 import {
   MapPin,
@@ -9,9 +10,11 @@ import {
   Sparkles,
   Coffee,
   Rocket,
-  MessageSquare,
   X,
+  UserCheck,
 } from "lucide-react";
+
+import type { StageChapter } from "@/components/ui/SpatialPortfolioOS";
 
 type AvatarMood = "idle" | "coding" | "thinking" | "celebrating" | "speaking";
 
@@ -27,7 +30,8 @@ interface ActionOption {
     subtext?: string;
     quickAction?: {
       label: string;
-      href: string;
+      href?: string;
+      chapter?: StageChapter;
     };
   };
 }
@@ -46,7 +50,7 @@ const ACTION_OPTIONS: ActionOption[] = [
       subtext: "Especializado en arquitecturas limpias y APIs de alto rendimiento.",
       quickAction: {
         label: "Explorar Habilidades",
-        href: "#habilidades",
+        chapter: "habilidades",
       },
     },
   },
@@ -63,7 +67,7 @@ const ACTION_OPTIONS: ActionOption[] = [
       subtext: "100% operativo en producción con Django y PostgreSQL.",
       quickAction: {
         label: "Ver Demo de SIGIF",
-        href: "#proyecto",
+        chapter: "sigif",
       },
     },
   },
@@ -79,8 +83,8 @@ const ACTION_OPTIONS: ActionOption[] = [
         "Estoy radicado en Medellín, Colombia y disponible para vinculación inmediata en modalidad remota o híbrida como Desarrollador Junior.",
       subtext: "Abierto a retos de alto aprendizaje y proyectos ambiciosos.",
       quickAction: {
-        label: "Escribirme al WhatsApp",
-        href: "https://wa.me/573126691941",
+        label: "Armar un proyecto conmigo",
+        chapter: "crear",
       },
     },
   },
@@ -95,42 +99,41 @@ const ACTION_OPTIONS: ActionOption[] = [
       description:
         "No tolero el código desordenado ni las interfaces lentas. Prefiero soluciones elegantes y comprobadas con tests que resuelvan problemas reales.",
       subtext: "Cuidando cada micro-detalle del diseño y del backend.",
-      quickAction: {
-        label: "Conocer mi perfil",
-        href: "#sobre-mi",
-      },
     },
   },
 ];
 
-export const AppleVectorAvatar: React.FC = () => {
+interface AppleVectorAvatarProps {
+  onNavigate?: (chapter: StageChapter) => void;
+}
+
+export const AppleVectorAvatar: React.FC<AppleVectorAvatarProps> = ({ onNavigate }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeAction, setActiveAction] = useState<ActionOption | null>(null);
-  const [mood, setMood] = useState<AvatarMood>("idle");
-  const [blinking, setBlinking] = useState(false);
-  const [waveArm, setWaveArm] = useState(false);
+  const [activeMood, setActiveMood] = useState<AvatarMood>("idle");
+  const [isWaving, setIsWaving] = useState(false);
 
   // Mouse tilt motion values
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  // Spring physics for smooth movement
-  const springConfig = { damping: 25, stiffness: 180, mass: 0.5 };
+  // Physics spring for silky smooth Apple tilt
+  const springConfig = { damping: 22, stiffness: 180, mass: 0.5 };
   const smoothX = useSpring(mouseX, springConfig);
   const smoothY = useSpring(mouseY, springConfig);
 
   // 3D Tilt transforms
-  const rotateY = useTransform(smoothX, [-0.5, 0.5], [-12, 12]);
-  const rotateX = useTransform(smoothY, [-0.5, 0.5], [10, -10]);
+  const rotateY = useTransform(smoothX, [-0.5, 0.5], [-14, 14]);
+  const rotateX = useTransform(smoothY, [-0.5, 0.5], [12, -12]);
 
-  // Head and Eye Parallax offsets
-  const headX = useTransform(smoothX, [-0.5, 0.5], [-10, 10]);
-  const headY = useTransform(smoothY, [-0.5, 0.5], [-8, 8]);
-  const pupilX = useTransform(smoothX, [-0.5, 0.5], [-6, 6]);
-  const pupilY = useTransform(smoothY, [-0.5, 0.5], [-5, 5]);
+  // Multilayer Parallax Offsets
+  const portraitX = useTransform(smoothX, [-0.5, 0.5], [-14, 14]);
+  const portraitY = useTransform(smoothY, [-0.5, 0.5], [-10, 10]);
+  const haloX = useTransform(smoothX, [-0.5, 0.5], [18, -18]);
+  const haloY = useTransform(smoothY, [-0.5, 0.5], [16, -16]);
 
-  // Specular Glare position
+  // Dynamic Specular Glare following cursor
   const glareX = useTransform(smoothX, [-0.5, 0.5], ["10%", "90%"]);
   const glareY = useTransform(smoothY, [-0.5, 0.5], ["10%", "90%"]);
 
@@ -148,45 +151,36 @@ export const AppleVectorAvatar: React.FC = () => {
     mouseY.set(0);
   };
 
-  // Periodic Blink Animation
-  useEffect(() => {
-    const blinkInterval = setInterval(() => {
-      setBlinking(true);
-      setTimeout(() => setBlinking(false), 160);
-    }, 3800);
-    return () => clearInterval(blinkInterval);
-  }, []);
-
   const handleAvatarClick = () => {
-    setWaveArm(true);
-    setTimeout(() => setWaveArm(false), 800);
+    setIsWaving(true);
+    setTimeout(() => setIsWaving(false), 800);
     setMenuOpen((prev) => !prev);
     if (!menuOpen && !activeAction) {
-      setMood("speaking");
+      setActiveMood("speaking");
     }
   };
 
   const selectOption = (opt: ActionOption) => {
     setActiveAction(opt);
-    setMood(opt.mood);
-    setWaveArm(true);
-    setTimeout(() => setWaveArm(false), 600);
+    setActiveMood(opt.mood);
+    setIsWaving(true);
+    setTimeout(() => setIsWaving(false), 600);
   };
 
   const closeDialog = () => {
     setActiveAction(null);
-    setMood("idle");
+    setActiveMood("idle");
   };
 
   return (
     <div
-      style={{ perspective: 1000 }}
+      style={{ perspective: 1200 }}
       className="relative w-full max-w-[390px] sm:max-w-[430px] mx-auto select-none"
     >
-      {/* Apple Ambient Aura */}
-      <div className="absolute inset-0 m-auto w-64 h-64 rounded-full bg-gradient-to-tr from-[#28C76F]/14 via-[#0071E3]/10 to-transparent blur-3xl pointer-events-none -z-10" />
+      {/* Apple Ambient Aura behind card */}
+      <div className="absolute inset-0 m-auto w-64 h-64 rounded-full bg-gradient-to-tr from-[#0071E3]/15 via-[#28C76F]/10 to-transparent blur-3xl pointer-events-none -z-10" />
 
-      {/* Main Interactive Card */}
+      {/* Main Apple 3D Interactive Card */}
       <motion.div
         ref={cardRef}
         onMouseMove={handleMouseMove}
@@ -198,7 +192,7 @@ export const AppleVectorAvatar: React.FC = () => {
         }}
         className="relative rounded-[36px] bg-white border border-black/[0.08] p-6 sm:p-7 shadow-[0_25px_60px_rgba(0,0,0,0.06)] hover:shadow-[0_35px_80px_rgba(0,113,227,0.12)] transition-shadow duration-500 overflow-hidden group"
       >
-        {/* Top Header with Quest Pill / Status */}
+        {/* Top Header Bar */}
         <div className="flex items-center justify-between pb-3.5 border-b border-black/[0.05] mb-4">
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-[#34c759] animate-pulse" />
@@ -216,180 +210,77 @@ export const AppleVectorAvatar: React.FC = () => {
           </button>
         </div>
 
-        {/* Central Character Stage */}
+        {/* Central Character Stage: Cutout 3D Avatar + Parallax Depth Layers */}
         <div
           onClick={handleAvatarClick}
-          className="relative w-full h-[270px] sm:h-[280px] flex items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-b from-[#fbfbfd] to-[#f5f5f7] border border-black/[0.04] cursor-pointer"
+          className="relative w-full h-[300px] sm:h-[320px] flex items-end justify-center overflow-hidden rounded-2xl bg-gradient-to-b from-[#fbfbfd] via-[#f7f8fa] to-[#eff1f5] border border-black/[0.04] cursor-pointer"
         >
-          {/* Subtle Stage Lighting Ring */}
-          <div className="absolute w-44 h-44 rounded-full bg-white shadow-inner border border-black/[0.03]" />
+          {/* Background Ambient Depth Ring (Parallaxes opposite to cursor) */}
+          <motion.div
+            style={{ x: haloX, y: haloY }}
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-56 h-56 rounded-full bg-gradient-to-tr from-[#0071E3]/8 via-white to-[#28C76F]/8 border border-black/[0.04] shadow-[0_8px_32px_rgba(0,113,227,0.05)]"
+          />
 
-          {/* Prompt banner when menu is closed */}
+          {/* Interactive Click Invitation Banner */}
           {!menuOpen && !activeAction && (
             <motion.div
               initial={{ opacity: 0, y: 5 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="absolute top-3 px-3 py-1 rounded-full bg-white/90 border border-black/[0.06] shadow-sm text-[11px] text-[#86868b] flex items-center gap-1.5 z-20 pointer-events-none"
+              transition={{ delay: 0.3 }}
+              className="absolute top-3 px-3 py-1 rounded-full bg-white/90 border border-black/[0.06] shadow-sm text-[11px] text-[#86868b] flex items-center gap-1.5 z-20 pointer-events-none backdrop-blur-md"
             >
-              <MessageSquare className="w-3 h-3 text-[#0071e3]" />
+              <UserCheck className="w-3 h-3 text-[#0071e3]" />
               <span>Haz clic en mí para interactuar</span>
             </motion.div>
           )}
 
-          {/* SVG Character with dynamic facial expressions and arm gestures */}
-          <motion.svg
-            viewBox="0 0 240 260"
-            className="w-56 h-56 relative z-10 drop-shadow-md"
-            style={{ x: headX, y: headY }}
+          {/* 3D Cutout Avatar of Andrés (Transparent Background) */}
+          <motion.div
+            style={{
+              x: portraitX,
+              y: portraitY,
+              transformStyle: "preserve-3d",
+            }}
+            animate={
+              isWaving
+                ? {
+                    scale: [1, 1.05, 0.98, 1.03, 1],
+                    rotate: [0, 2.5, -2.5, 1.5, 0],
+                  }
+                : {
+                    scale: 1,
+                    rotate: 0,
+                  }
+            }
+            transition={{ duration: 0.6 }}
+            className="relative z-10 w-[260px] h-[275px] sm:w-[285px] sm:h-[300px] drop-shadow-[0_18px_28px_rgba(0,0,0,0.12)]"
           >
-            <defs>
-              <linearGradient id="skinGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#8D5524" />
-                <stop offset="100%" stopColor="#703D14" />
-              </linearGradient>
-              <linearGradient id="skinShadow" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#703D14" />
-                <stop offset="100%" stopColor="#5A2E0C" />
-              </linearGradient>
-              <linearGradient id="hoodieGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#28C76F" />
-                <stop offset="100%" stopColor="#1EA75B" />
-              </linearGradient>
-              <linearGradient id="collarGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#E9D5FF" />
-                <stop offset="100%" stopColor="#D8B4FE" />
-              </linearGradient>
-              <linearGradient id="hairGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#221815" />
-                <stop offset="100%" stopColor="#150E0C" />
-              </linearGradient>
-            </defs>
+            <Image
+              src="/avatar_3d_nobg.png"
+              alt="Andrés Machado · Avatar 3D"
+              fill
+              priority
+              className="object-contain object-bottom transition-transform duration-500 group-hover:scale-[1.03]"
+              sizes="(max-width: 640px) 260px, 300px"
+            />
+          </motion.div>
 
-            {/* Body */}
-            <g id="body">
-              <path
-                d="M40 260 C40 205, 75 190, 120 190 C165 190, 200 205, 200 260 Z"
-                fill="url(#hoodieGrad)"
-              />
-              <path
-                d="M55 210 C70 195, 95 192, 120 192 C145 192, 170 195, 185 210"
-                fill="none"
-                stroke="#1B8E4E"
-                strokeWidth="2.5"
-                opacity="0.4"
-              />
-              <ellipse cx="120" cy="192" rx="36" ry="14" fill="url(#collarGrad)" />
-              <path d="M108 196 L106 226" stroke="#FFFFFF" strokeWidth="3" strokeLinecap="round" />
-              <circle cx="106" cy="227" r="2.5" fill="#E5E7EB" />
-              <path d="M132 196 L134 226" stroke="#FFFFFF" strokeWidth="3" strokeLinecap="round" />
-              <circle cx="134" cy="227" r="2.5" fill="#E5E7EB" />
-            </g>
-
-            {/* Waving / Interactive Hand */}
-            {waveArm && (
-              <motion.g
-                initial={{ rotate: -20, originX: "180px", originY: "210px" }}
-                animate={{ rotate: [0, 25, -10, 20, 0] }}
-                transition={{ duration: 0.6 }}
+          {/* Dynamic Floating Badge Based on Mood */}
+          <AnimatePresence>
+            {activeMood !== "idle" && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8, y: 15 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.8, y: 10 }}
+                className="absolute bottom-3.5 z-20 px-3 py-1 rounded-full bg-white/95 border border-black/[0.08] shadow-md text-[11px] font-semibold text-[#1d1d1f] flex items-center gap-1.5 pointer-events-none backdrop-blur-md"
               >
-                <path d="M175 210 C190 190, 200 170, 205 155" stroke="url(#hoodieGrad)" strokeWidth="16" strokeLinecap="round" fill="none" />
-                <circle cx="206" cy="150" r="11" fill="url(#skinGrad)" />
-                <circle cx="212" cy="144" r="3.5" fill="url(#skinGrad)" />
-              </motion.g>
+                {activeMood === "coding" && <span className="text-[#0071e3]">💻 Modo Desarrollo Activo</span>}
+                {activeMood === "celebrating" && <span className="text-[#ff9500]">🚀 SIGIF en Producción</span>}
+                {activeMood === "speaking" && <span className="text-[#34c759]">☕ Disponible para proyectos</span>}
+                {activeMood === "thinking" && <span className="text-[#af52de]">✨ Código limpio y probado</span>}
+              </motion.div>
             )}
-
-            {/* Neck */}
-            <g id="neck">
-              <path d="M104 158 L104 192 L136 192 L136 158 Z" fill="url(#skinShadow)" />
-            </g>
-
-            {/* Head */}
-            <g id="head">
-              <circle cx="68" cy="125" r="14" fill="url(#skinShadow)" />
-              <circle cx="69" cy="125" r="8" fill="#5A2E0C" opacity="0.4" />
-              <circle cx="172" cy="125" r="14" fill="url(#skinShadow)" />
-              <circle cx="171" cy="125" r="8" fill="#5A2E0C" opacity="0.4" />
-
-              <path
-                d="M74 110 C74 65, 166 65, 166 110 C166 160, 148 175, 120 175 C92 175, 74 160, 74 110 Z"
-                fill="url(#skinGrad)"
-              />
-
-              <ellipse cx="88" cy="135" rx="9" ry="5" fill="#A84D1E" opacity="0.4" />
-              <ellipse cx="152" cy="135" rx="9" ry="5" fill="#A84D1E" opacity="0.4" />
-
-              <path
-                d="M117 122 Q120 128 123 122"
-                fill="none"
-                stroke="#5A2E0C"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-              />
-
-              {/* Dynamic Mouth / Smile based on mood */}
-              {mood === "celebrating" ? (
-                <path d="M104 139 Q120 162 136 139 Z" fill="#FFFFFF" stroke="#422006" strokeWidth="2.5" />
-              ) : mood === "coding" ? (
-                <path d="M108 143 Q120 148 132 143" fill="none" stroke="#422006" strokeWidth="3" strokeLinecap="round" />
-              ) : mood === "thinking" ? (
-                <ellipse cx="120" cy="144" rx="5" ry="6" fill="#422006" />
-              ) : (
-                <path d="M106 142 Q120 156 134 142" fill="none" stroke="#422006" strokeWidth="3" strokeLinecap="round" />
-              )}
-
-              {/* Eyes & Eyebrows */}
-              <g id="eyes">
-                {/* Eyebrows change with mood */}
-                {mood === "thinking" ? (
-                  <>
-                    <path d="M90 94 Q100 89 108 97" fill="none" stroke="#150E0C" strokeWidth="3.5" strokeLinecap="round" />
-                    <path d="M132 99 Q140 96 150 95" fill="none" stroke="#150E0C" strokeWidth="3.5" strokeLinecap="round" />
-                  </>
-                ) : (
-                  <>
-                    <path d="M90 98 Q100 93 108 97" fill="none" stroke="#150E0C" strokeWidth="3.5" strokeLinecap="round" />
-                    <path d="M132 97 Q140 93 150 98" fill="none" stroke="#150E0C" strokeWidth="3.5" strokeLinecap="round" />
-                  </>
-                )}
-
-                {/* Left Eye */}
-                {blinking ? (
-                  <path d="M92 114 Q101 117 110 114" stroke="#150E0C" strokeWidth="3" fill="none" strokeLinecap="round" />
-                ) : (
-                  <g>
-                    <ellipse cx="101" cy="114" rx="9" ry="8" fill="#FFFFFF" />
-                    <motion.circle cx="101" cy="114" r="5.5" fill="#1D1D1F" style={{ x: pupilX, y: pupilY }} />
-                    <motion.circle cx="103" cy="112" r="2" fill="#FFFFFF" style={{ x: pupilX, y: pupilY }} />
-                  </g>
-                )}
-
-                {/* Right Eye */}
-                {blinking ? (
-                  <path d="M130 114 Q139 117 148 114" stroke="#150E0C" strokeWidth="3" fill="none" strokeLinecap="round" />
-                ) : (
-                  <g>
-                    <ellipse cx="139" cy="114" rx="9" ry="8" fill="#FFFFFF" />
-                    <motion.circle cx="139" cy="114" r="5.5" fill="#1D1D1F" style={{ x: pupilX, y: pupilY }} />
-                    <motion.circle cx="141" cy="112" r="2" fill="#FFFFFF" style={{ x: pupilX, y: pupilY }} />
-                  </g>
-                )}
-              </g>
-
-              {/* Hair */}
-              <g id="hair">
-                <path
-                  d="M68 112 C64 68, 88 42, 120 42 C152 42, 176 68, 172 112 C172 112, 166 94, 154 90 C140 85, 134 76, 120 76 C106 76, 100 85, 86 90 C74 94, 68 112, 68 112 Z"
-                  fill="url(#hairGrad)"
-                />
-                <path
-                  d="M92 68 C96 46, 124 38, 138 48 C148 56, 142 70, 132 74 C116 78, 102 78, 92 68 Z"
-                  fill="#2C1F1B"
-                />
-                <path d="M102 56 C110 44, 130 44, 136 54" fill="none" stroke="#3D2B26" strokeWidth="2.5" strokeLinecap="round" />
-              </g>
-            </g>
-          </motion.svg>
+          </AnimatePresence>
         </div>
 
         {/* ================= RPG / GAME DIALOG RESPONSE BOX ================= */}
@@ -429,13 +320,18 @@ export const AppleVectorAvatar: React.FC = () => {
               )}
 
               {activeAction.response.quickAction && (
-                <a
-                  href={activeAction.response.quickAction.href}
-                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#0071e3] hover:underline"
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (activeAction.response.quickAction?.chapter && onNavigate) {
+                      onNavigate(activeAction.response.quickAction.chapter);
+                    }
+                  }}
+                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#0071e3] hover:underline cursor-pointer"
                 >
                   <span>{activeAction.response.quickAction.label}</span>
                   <span>&rarr;</span>
-                </a>
+                </button>
               )}
             </motion.div>
           )}
