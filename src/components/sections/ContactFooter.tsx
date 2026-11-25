@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, Copy, ArrowUpRight, Mail, MapPin, Send } from "lucide-react";
+import { Check, Copy, ArrowUpRight, Mail, MapPin, Send, AlertCircle } from "lucide-react";
 import { GithubIcon, LinkedInIcon, WhatsAppIcon } from "@/components/ui/Icons";
 import { PORTFOLIO_DATA } from "@/data/portfolio";
 
@@ -11,6 +11,7 @@ export const ContactFooter: React.FC = () => {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const copy = () => {
     navigator.clipboard.writeText(PORTFOLIO_DATA.personal.email);
@@ -18,15 +19,37 @@ export const ContactFooter: React.FC = () => {
     setTimeout(() => setCopied(false), 2500);
   };
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name || !form.email || !form.message) return;
+
     setSending(true);
-    setTimeout(() => {
-      setSending(false);
+    setErrorMsg(null);
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "No se pudo enviar el correo.");
+      }
+
       setSent(true);
       setForm({ name: "", email: "", message: "" });
-    }, 1000);
+    } catch (err: unknown) {
+      console.error("Error enviando mensaje:", err);
+      const message = err instanceof Error ? err.message : "Ocurrió un error al enviar el correo. Por favor intenta de nuevo o escríbeme por WhatsApp.";
+      setErrorMsg(message);
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -148,7 +171,7 @@ export const ContactFooter: React.FC = () => {
               Enviar Mensaje
             </h3>
             <p className="text-xs text-[#86868b] mb-6">
-              Déjame un mensaje y te responderé en breve.
+              Recibirás una respuesta de confirmación inmediata en tu bandeja de entrada.
             </p>
 
             <AnimatePresence mode="wait">
@@ -159,14 +182,14 @@ export const ContactFooter: React.FC = () => {
                   animate={{ opacity: 1, scale: 1 }}
                   className="py-12 text-center"
                 >
-                  <div className="w-10 h-10 rounded-full bg-[#34c759]/10 text-[#248a3d] flex items-center justify-center mx-auto mb-4">
-                    <Check className="w-5 h-5" />
+                  <div className="w-12 h-12 rounded-full bg-[#34c759]/10 text-[#248a3d] flex items-center justify-center mx-auto mb-4">
+                    <Check className="w-6 h-6" />
                   </div>
-                  <p className="text-base font-semibold text-[#1d1d1f] mb-1">
+                  <h4 className="text-lg font-bold text-[#1d1d1f] mb-1">
                     ¡Mensaje enviado con éxito!
-                  </p>
-                  <p className="text-xs text-[#86868b] mb-6">
-                    Gracias por ponerte en contacto. Responderé a tu correo pronto.
+                  </h4>
+                  <p className="text-xs text-[#86868b] max-w-sm mx-auto mb-6 leading-relaxed">
+                    Te he enviado un correo de confirmación con los detalles de tu consulta. Te responderé en menos de 24 horas.
                   </p>
                   <button
                     onClick={() => setSent(false)}
@@ -177,6 +200,13 @@ export const ContactFooter: React.FC = () => {
                 </motion.div>
               ) : (
                 <motion.form key="form" onSubmit={submit} className="space-y-4">
+                  {errorMsg && (
+                    <div className="p-3.5 rounded-xl bg-red-50 border border-red-200 text-xs text-red-600 flex items-start gap-2">
+                      <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                      <span>{errorMsg}</span>
+                    </div>
+                  )}
+
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-semibold text-[#1d1d1f] mb-1.5">
@@ -185,10 +215,11 @@ export const ContactFooter: React.FC = () => {
                       <input
                         type="text"
                         required
+                        disabled={sending}
                         value={form.name}
                         onChange={(e) => setForm({ ...form, name: e.target.value })}
                         placeholder="Tu nombre"
-                        className="w-full px-4 py-3 rounded-xl border border-black/[0.08] text-sm text-[#1d1d1f] placeholder:text-[#c0c0c5] focus:outline-none focus:border-[#0071e3] transition-colors bg-white"
+                        className="w-full px-4 py-3 rounded-xl border border-black/[0.08] text-sm text-[#1d1d1f] placeholder:text-[#c0c0c5] focus:outline-none focus:border-[#0071e3] transition-colors bg-white disabled:opacity-50"
                       />
                     </div>
                     <div>
@@ -198,10 +229,11 @@ export const ContactFooter: React.FC = () => {
                       <input
                         type="email"
                         required
+                        disabled={sending}
                         value={form.email}
                         onChange={(e) => setForm({ ...form, email: e.target.value })}
                         placeholder="tu@email.com"
-                        className="w-full px-4 py-3 rounded-xl border border-black/[0.08] text-sm text-[#1d1d1f] placeholder:text-[#c0c0c5] focus:outline-none focus:border-[#0071e3] transition-colors bg-white"
+                        className="w-full px-4 py-3 rounded-xl border border-black/[0.08] text-sm text-[#1d1d1f] placeholder:text-[#c0c0c5] focus:outline-none focus:border-[#0071e3] transition-colors bg-white disabled:opacity-50"
                       />
                     </div>
                   </div>
@@ -212,19 +244,20 @@ export const ContactFooter: React.FC = () => {
                     <textarea
                       required
                       rows={4}
+                      disabled={sending}
                       value={form.message}
                       onChange={(e) => setForm({ ...form, message: e.target.value })}
                       placeholder="Cuéntame sobre tu proyecto o propuesta laboral..."
-                      className="w-full px-4 py-3 rounded-xl border border-black/[0.08] text-sm text-[#1d1d1f] placeholder:text-[#c0c0c5] focus:outline-none focus:border-[#0071e3] transition-colors resize-none bg-white"
+                      className="w-full px-4 py-3 rounded-xl border border-black/[0.08] text-sm text-[#1d1d1f] placeholder:text-[#c0c0c5] focus:outline-none focus:border-[#0071e3] transition-colors resize-none bg-white disabled:opacity-50"
                     />
                   </div>
                   <button
                     type="submit"
                     disabled={sending}
-                    className="w-full py-3 rounded-xl bg-[#1d1d1f] text-white text-sm font-semibold hover:bg-black disabled:opacity-60 transition-colors flex items-center justify-center gap-2"
+                    className="w-full py-3 rounded-xl bg-[#1d1d1f] text-white text-sm font-semibold hover:bg-black disabled:opacity-60 transition-colors flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <Send className="w-4 h-4" />
-                    {sending ? "Enviando..." : "Enviar mensaje"}
+                    {sending ? "Enviando por servidor..." : "Enviar mensaje"}
                   </button>
                 </motion.form>
               )}
