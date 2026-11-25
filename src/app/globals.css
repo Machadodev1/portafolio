@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    background: #fff;
+    color: #1d1d1f;
+    overflow-x: hidden;
+  }
+
+  body {
+    background: #fff;
+  }
+
+  ::selection {
+    background: rgba(0, 113, 227, 0.14);
+    color: #000;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+}
